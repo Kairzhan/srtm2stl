@@ -5,18 +5,35 @@ import numpy as np;
 #
 
 SAMPLES=1201
-hgt_file='hgt/N43E076.hgt'
+
+A00='hgt/N42E076.hgt'
+A10='hgt/N42E077.hgt'
+A01='hgt/N43E076.hgt'
+A11='hgt/N43E077.hgt'
 
 x=np.arange(0,SAMPLES-1,1)
 y=np.arange(0,SAMPLES-1,1)
 
-with open(hgt_file) as hgt_data:
-    Z = np.fromfile(hgt_data, np.dtype('>i2'), SAMPLES*SAMPLES).reshape((SAMPLES, SAMPLES))
+with open(A00) as A00_data:
+    Zx = np.fromfile(A00_data, np.dtype('>i2'), SAMPLES*SAMPLES).reshape((SAMPLES, SAMPLES))
+
+with open(A10) as A10_data:
+    tempx = np.fromfile(A10_data, np.dtype('>i2'), SAMPLES*SAMPLES).reshape((SAMPLES, SAMPLES))
+    ZZx=np.concatenate((Zx, tempx), axis=1)
+
+#with open(A01) as A01_data:
+#    Zy = np.fromfile(A01_data, np.dtype('>i2'), SAMPLES*SAMPLES).reshape((SAMPLES, SAMPLES))
+#
+#with open(A11) as A11_data:
+#    tempy = np.fromfile(A11_data, np.dtype('>i2'), SAMPLES*SAMPLES).reshape((SAMPLES, SAMPLES))
+#    ZZy=np.concatenate((Zy, tempy), axis=1)
+#
+Z=ZZx #np.concatenate((ZZx, ZZy), axis=0)
 
 print("solid AlmatyTerrain")
-for i in range(1, SAMPLES-1):
+for i in range(1, 2*SAMPLES-1):
     x=i*90
-    for j in range(1, SAMPLES-1):
+    for j in range(1, 2*SAMPLES-1):
         y=j*90
         a=np.array([x,y,Z[i,j]])
         b=np.array([x+90,y,Z[i+1,j]])
