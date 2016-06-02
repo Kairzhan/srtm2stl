@@ -5,7 +5,7 @@ import numpy as np;
 #
 
 SAMPLES=1201
-
+NODATA=-32768
 A00='hgt/N42E076.hgt'
 A10='hgt/N42E077.hgt'
 A01='hgt/N43E076.hgt'
@@ -21,20 +21,28 @@ with open(A10) as A10_data:
     tempx = np.fromfile(A10_data, np.dtype('>i2'), SAMPLES*SAMPLES).reshape((SAMPLES, SAMPLES))
     ZZx=np.concatenate((Zx, tempx), axis=1)
 
-#with open(A01) as A01_data:
-#    Zy = np.fromfile(A01_data, np.dtype('>i2'), SAMPLES*SAMPLES).reshape((SAMPLES, SAMPLES))
-#
-#with open(A11) as A11_data:
-#    tempy = np.fromfile(A11_data, np.dtype('>i2'), SAMPLES*SAMPLES).reshape((SAMPLES, SAMPLES))
-#    ZZy=np.concatenate((Zy, tempy), axis=1)
-#
-Z=ZZx #np.concatenate((ZZx, ZZy), axis=0)
+with open(A01) as A01_data:
+    Zy = np.fromfile(A01_data, np.dtype('>i2'), SAMPLES*SAMPLES).reshape((SAMPLES, SAMPLES))
+
+with open(A11) as A11_data:
+    tempy = np.fromfile(A11_data, np.dtype('>i2'), SAMPLES*SAMPLES).reshape((SAMPLES, SAMPLES))
+    ZZy=np.concatenate((Zy, tempy), axis=1)
+
+Z=np.concatenate((ZZy, ZZx), axis=0)
+
+# Remove NODATA values
+for i in range(1, 2*SAMPLES-1):
+    for j in range(1, 2*SAMPLES-1):
+        if Z[i,j] == NODATA:
+            Z[i,j] = Z[i-1,j]
 
 print("solid AlmatyTerrain")
+
 for i in range(1, 2*SAMPLES-1):
     x=i*90
     for j in range(1, 2*SAMPLES-1):
         y=j*90
+
         a=np.array([x,y,Z[i,j]])
         b=np.array([x+90,y,Z[i+1,j]])
         c=np.array([x,y+90,Z[i,j+1]])

@@ -11,9 +11,6 @@ A10='hgt/N42E077.hgt'
 A01='hgt/N43E076.hgt'
 A11='hgt/N43E077.hgt'
 
-#x=np.arange(0,SAMPLES-1,1)
-#y=np.arange(0,SAMPLES-1,1)
-
 with open(A00) as A00_data:
     Zx = np.fromfile(A00_data, np.dtype('>i2'), SAMPLES*SAMPLES).reshape((SAMPLES, SAMPLES))
 
@@ -40,24 +37,28 @@ for i in range(1, 2*SAMPLES-1):
 coordx=76.895833
 coordy=43.2775
 
-CI=int((2400//2)*(coordx-76))
-CJ=int((2400//2)*(coordy-42))
+CI=int((2400//2)*(coordy-42))
+CJ=int((2400//2)*(coordx-76))
 
 CI=2402-CI
-CJ=2402-CJ
 
-deltaI=300
-deltaJ=300
+deltaI=200
+deltaJ=200
 
-print(CI)
-print(CJ)
+#print(CI)
+#print(CJ)
 
 Zsmall=Z[CI-deltaI:CI+deltaI, CJ-deltaJ:CJ+deltaJ]
 
 dims=np.shape(Zsmall)
 
-print(dims[0])
-print(dims[1])
+#print(dims[0])
+#print(dims[1])
+
+for iter in range(1,5):
+    for i in range(1, dims[0]-1):
+        for j in range(1, dims[1]-1):
+            Zsmall[i,j] = 0.25 * (Zsmall[i-1,j]+Zsmall[i+1,j]+Zsmall[i,j-1]+Zsmall[i,j+1])
 
 print("solid AlmatyTerrain")
 
